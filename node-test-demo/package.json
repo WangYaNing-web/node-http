@@ -5,12 +5,15 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon bin/www"
+    "dev": "cross-env NODE_ENV=dev nodemon ./bin/www",
+    "prod": "cross-env NODE_ENV=production nodemon ./bin/www"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cross-env": "^5.2.0",
+    "mysql": "^2.17.1",
     "nodemon": "^1.19.1",
     "querystring": "^0.2.0"
   }

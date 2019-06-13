@@ -24,52 +24,76 @@ const HandleBlogRouter = ( req, res ) => {
 
         const author    = req.query.author || ''
         const keyword   = req.query.keyword || ''
-        const listData  = getList( author, keyword )
 
-        return new SuccessModel( listData )
+        const result = getList( author, keyword )
+
+        return result.then( listData => {
+            return new SuccessModel( listData )
+        })
+
+        
     }
 
     // 获取博客详情 
 
     if( method == 'GET' && req.path === '/api/blog/detail' ){
 
-        const data = getDetail( id )
+        const result = getDetail( id )
 
-        return new SuccessModel( data )
+        return result.then( rowData => {
+            return new SuccessModel( rowData )
+        })
     }
 
 
     // 新建博客 
 
     if( method == 'POST' && req.path === '/api/blog/new' ){
-        const data = newBlog( req.body )
-        return new SuccessModel(data)
+
+        const author = 'zhangsan'
+
+        req.body.author = author
+
+        const insertResult  = newBlog( req.body )
+
+        return insertResult.then( insertData => {
+            return new SuccessModel(insertData)
+        })
     }
 
     // 更新博客 
 
     if( method == 'POST' && req.path === '/api/blog/update' ){
 
-        const result  = updateBlog( id, req.body )
+        const updataResult  = updateBlog( id, req.body )
 
-        if( result ){
-            return new SuccessModel()
-        } else {
-            return new ErrorModel()
-        }
+
+        return updataResult.then( updataData => { 
+            if( updataData ){
+                return new SuccessModel()
+            } else {
+                return new ErrorModel('更新博客失败')
+            }
+        })
+        
     }
 
     // 删除博客 
 
-    if( method == 'POST' && req.path === '/api/blog/del' ){
+    if( method == 'GET' && req.path === '/api/blog/del' ){
 
-        const result = delBlog( id )
+        const author = 'zhangsan'
+        const delResult = delBlog( id, author )
 
-        if( result ) {
-            return new SuccessModel()
-        } else {
-            return new ErrorModel('删除博客失败')
-        }
+        return delResult.then( val  => {
+            if( val ) {
+                return new SuccessModel()
+            } else {
+                return new ErrorModel('删除博客失败')
+            }
+        })
+
+        
     }
 }
 module.exports = HandleBlogRouter
