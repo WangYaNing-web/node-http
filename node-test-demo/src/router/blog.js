@@ -12,7 +12,13 @@ const {
     ErrorModel 
 }  = require('../model/resModel')
 
-
+const loginCheck = req => {
+    if( !req.session.username ) {
+        return Promise.resolve(
+            new ErrorModel('尚未登录')
+        )
+    }
+}
 
 const HandleBlogRouter = ( req, res ) => {
 
@@ -45,14 +51,22 @@ const HandleBlogRouter = ( req, res ) => {
         })
     }
 
+    
+    
 
     // 新建博客 
 
     if( method == 'POST' && req.path === '/api/blog/new' ){
 
-        const author = 'zhangsan'
 
-        req.body.author = author
+        const loginCheckResult  = loginCheck( req )
+
+        if( loginCheckResult ){
+            return loginCheckResult
+        }
+
+
+        req.body.author = req.session.username
 
         const insertResult  = newBlog( req.body )
 
@@ -82,7 +96,14 @@ const HandleBlogRouter = ( req, res ) => {
 
     if( method == 'GET' && req.path === '/api/blog/del' ){
 
-        const author = 'zhangsan'
+
+        const loginCheckResult  = loginCheck( req )
+
+        if( loginCheckResult ){
+            return loginCheckResult
+        }
+
+        const author = req.session.username
         const delResult = delBlog( id, author )
 
         return delResult.then( val  => {

@@ -15,6 +15,8 @@ const getCookieExpires = () => {
 
 const serverHandle = ( req, res ) => {
 
+
+
     // 设置返回格式 JSON
     res.setHeader('Content-type','application/json')
 
@@ -46,14 +48,17 @@ const serverHandle = ( req, res ) => {
     let needSetCookie = false 
     let userId = req.cookie.userid
 
-    if ( userId && !SESSION_DATA[userId] ) {
-        SESSION_DATA[userId] = {}
+    if ( userId ) {
+        if( !SESSION_DATA[userId] ){
+            SESSION_DATA[userId] = {}
+        }
         
     } else {
         needSetCookie = true
         userId = `${Date.now()}_${Math.random()}`
         SESSION_DATA[userId] = {}
     }
+
     req.session = SESSION_DATA[userId]
 
     // 解析 data
